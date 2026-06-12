@@ -425,8 +425,28 @@ const RAW={
   'EMILIANO ONDARRETA':[2,0,1,1,2,1,2,1,1,3,2,2,0,3,1,2,7,0,2,2,2,2,2,1,3,1,2,2,1,2,1,1,2,2,1,2,3,1,2,2,3,1,1,2,2,0,1,2,2,1,2,2,1,0,1,0,1,2,1,2,3,0,2,1,2,1,3,3,3,0,2,2,4,2,2,1,1,0,0,2,2,0,3,0,2,2,0,1,2,0,2,2,1,2,1,0,1,2,1,0,1,0,4,0,1,2,1,2,0,3,1,2,2,2,1,2,2,1,2,1,2,3,2,1,1,1,3,3,2,0,1,2,1,2,1,2,1,1,1,1,0,0,1,2],
 };
 
-let results = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
+// ===== SUPABASE CONFIG =====
+const SUPABASE_URL = 'https://tcavnemzmhwtymxrlmjt.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_w8Ej6aDpEWbQpZBw5wmRWA_5eIC4Ryi';
+
+let results = {};
 let matchFilter = 'all';
+
+async function loadResults() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/matches?select=id,home_score,away_score,status,minute`, {
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+    }
+  });
+  const data = await res.json();
+  results = {};
+  data.forEach(row => {
+    if (row.home_score !== null && row.away_score !== null) {
+      results[row.id] = { home: row.home_score, away: row.away_score, status: row.status, minute: row.minute };
+    }
+  });
+}
 
 // ===== SCORING =====
 function calcScore(preds, matchId) {
@@ -535,24 +555,16 @@ function renderMatches() {
           <div class="team-name">${teamLabel(m.away)}</div>
         </div>
         <div class="result-input-row">
-          <input class="score-input" id="r${m.id}h" type="number" min="0" max="20" placeholder="—" value="${r?r.home:''}">
+          <input class="score-input" id="r${m.id}h" type="number" min="0" max="20" placeholder="—" value="${r?r.home:''}" readonly>
           <div class="score-sep">–</div>
-          <input class="score-input" id="r${m.id}a" type="number" min="0" max="20" placeholder="—" value="${r?r.away:''}">
+          <input class="score-input" id="r${m.id}a" type="number" min="0" max="20" placeholder="—" value="${r?r.away:''}" readonly>
         </div>
-        <button class="save-btn ${r?'saved':''}" onclick="saveResult(${m.id})">
-          ${r?'Actualizar resultado':'Guardar resultado'}
-        </button>
       </div>`;
   }).join('') || '<div style="color:var(--muted);padding:2rem;text-align:center;grid-column:1/-1;">No se encontraron partidos</div>';
 }
 
 function saveResult(matchId) {
-  const h = parseInt(document.getElementById(`r${matchId}h`).value);
-  const a = parseInt(document.getElementById(`r${matchId}a`).value);
-  if (isNaN(h)||isNaN(a)||h<0||a<0) { alert('Ingresa marcadores válidos (números ≥ 0)'); return; }
-  results[matchId] = {home:h, away:a};
-  localStorage.setItem('wc2026_results', JSON.stringify(results));
-  renderAll();
+  alert('Los resultados solo se actualizan desde Supabase.');
 }
 
 function renderDetail() {
@@ -586,7 +598,10 @@ function setFilter(f) {
   renderMatches();
 }
 
-renderAll();
+(async function init() {
+  await loadResults();
+  renderAll();
+})();
 </script>
 </body>
 </html>
