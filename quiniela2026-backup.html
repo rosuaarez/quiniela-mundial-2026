@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiniela Mundial 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --pitch: #1a5c2e;
+    --pitch-light: #236b36;
+    --gold: #f0b429;
+    --silver: #b0bec5;
+    --bronze: #cd7f32;
+    --bg: #0d1117;
+    --card: #161b22;
+    --card2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --green: #3fb950;
+    --blue: #58a6ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #1a5c2e 50%, #0d1117 100%);
+    padding: 2rem 1rem 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.025) 60px, rgba(255,255,255,0.025) 62px);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    margin-bottom: 0.75rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: #fff;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; letter-spacing: 0.05em; }
+
+  /* STICKY NAV */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    background: rgba(22,27,34,0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sticky-nav::-webkit-scrollbar { display: none; }
+  .sticky-nav button.tab-btn {
+    flex-shrink: 0;
+    padding: 0.85rem 1.4rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .sticky-nav button.tab-btn:hover { color: var(--text); border-bottom-color: rgba(240,180,41,0.4); }
+  .sticky-nav button.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .tab-page { display: none; }
+  .tab-page.active { display: block; }
+
+  /* LAYOUT */
+  .container { max-width: 1400px; margin: 0 auto; padding: 2rem 1rem; }
+  .page-section { margin-bottom: 3rem; }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* TOP 5 */
+  .top5-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+  }
+  @media (max-width: 900px) { .top5-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .top5-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .top5-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .top5-card:hover { transform: translateY(-2px); }
+  .top5-card.rank-1 { border-color: var(--gold); background: linear-gradient(135deg, #1c1800, #1c2128); }
+  .top5-card.rank-2 { border-color: var(--silver); }
+  .top5-card.rank-3 { border-color: var(--bronze); }
+
+  .rank-badge {
+    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: #000;
+  }
+  .rank-1 .rank-badge { background: var(--gold); }
+  .rank-2 .rank-badge { background: var(--silver); }
+  .rank-3 .rank-badge { background: var(--bronze); }
+  .rank-4 .rank-badge, .rank-5 .rank-badge { background: var(--border); color: var(--muted); }
+
+  .player-name { font-weight: 600; font-size: 0.85rem; margin-top: 0.25rem; word-break: break-word; line-height: 1.3; }
+  .player-pts { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--gold); line-height: 1; margin-top: 0.5rem; }
+  .player-pts-label { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* SUMMARY STATS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.65rem;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem;
+    text-align: center;
+  }
+  .stat-icon { font-size: 1.3rem; margin-bottom: 0.2rem; }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--gold); }
+  .stat-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* STANDINGS */
+  .standings-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .standings-table th {
+    text-align: left; padding: 0.6rem 0.75rem; color: var(--muted);
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  .standings-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid rgba(48,54,61,0.5); vertical-align: middle; }
+  .standings-table tr:last-child td { border-bottom: none; }
+  .standings-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .pos-cell { font-weight: 700; width: 2rem; text-align: center; }
+  .medal-1 { color: var(--gold); }
+  .medal-2 { color: var(--silver); }
+  .medal-3 { color: var(--bronze); }
+  .pts-cell { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--gold); text-align: right; }
+  .exact-cell { font-size: 0.75rem; color: var(--muted); text-align: right; }
+  .winner-cell { font-size: 0.75rem; color: var(--blue); text-align: right; }
+
+  /* MATCHES */
+  .filter-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .filter-input {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); padding: 0.5rem 0.75rem;
+    font-family: 'Inter', sans-serif; font-size: 0.82rem; outline: none; flex: 1; min-width: 160px;
+  }
+  .filter-input:focus { border-color: var(--gold); }
+  .filter-btn {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--muted); padding: 0.5rem 0.75rem; font-size: 0.78rem;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .filter-btn:hover, .filter-btn.active { border-color: var(--gold); color: var(--gold); }
+
+  .matches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0.75rem; }
+  .match-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; transition: border-color 0.2s; }
+  .match-card.has-result { border-color: var(--pitch-light); }
+  .match-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+  .match-num { font-size: 0.62rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; }
+  .match-status { font-size: 0.62rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .match-status.pending { background: rgba(139,148,158,0.15); color: var(--muted); }
+  .match-status.done { background: rgba(63,185,80,0.15); color: var(--green); }
+
+  .match-teams { display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.65rem; }
+  .team-name { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.04em; flex: 1; text-align: center; }
+  .vs-divider { color: var(--muted); font-size: 0.72rem; }
+
+  .result-input-row { display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-bottom: 0.65rem; }
+  .score-input {
+    width: 46px; height: 38px; background: var(--card2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; text-align: center; outline: none; transition: border-color 0.2s;
+  }
+  .score-input:focus { border-color: var(--gold); }
+  .score-sep { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--muted); }
+
+  .save-btn {
+    width: 100%; padding: 0.45rem;
+    background: var(--pitch); border: 1px solid var(--pitch-light); border-radius: 8px;
+    color: #fff; font-family: 'Inter', sans-serif; font-size: 0.78rem;
+    font-weight: 600; cursor: pointer; transition: background 0.2s;
+  }
+  .save-btn:hover { background: var(--pitch-light); }
+  .save-btn.saved { background: rgba(63,185,80,0.2); border-color: var(--green); color: var(--green); }
+
+  /* DETAIL TABLE */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  .full-table { border-collapse: collapse; font-size: 0.72rem; min-width: 500px; width: 100%; }
+  .full-table th, .full-table td { padding: 0.38rem 0.45rem; border: 1px solid rgba(48,54,61,0.4); text-align: center; white-space: nowrap; }
+  .full-table th { background: var(--card2); color: var(--muted); font-size: 0.62rem; font-weight: 600; }
+  .full-table td.name-col { text-align: left; font-weight: 600; position: sticky; left: 0; background: var(--card); z-index: 1; min-width: 130px; }
+  .full-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .full-table tr:hover td.name-col { background: var(--card2); }
+  .cell-exact { background: rgba(63,185,80,0.25) !important; color: var(--green); font-weight: 700; }
+  .cell-winner { background: rgba(88,166,255,0.15) !important; color: var(--blue); }
+  .cell-none { color: rgba(139,148,158,0.35); }
+  .cell-pending { color: rgba(139,148,158,0.5); }
+
+  @media (max-width: 600px) {
+    .matches-grid { grid-template-columns: 1fr; }
+    .container { padding: 1.25rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">⚽ Temporada 2026</div>
+  <h1>QUINIELA <span>MUNDIAL</span></h1>
+  <div class="hero-sub">Copa del Mundo · 11 Jun – 19 Jul 2026 · 21 participantes</div>
+</div>
+
+<nav class="sticky-nav">
+  <button class="tab-btn active" data-tab="principal" onclick="setTab('principal')">🏆 Principal</button>
+  <button class="tab-btn" data-tab="partidos" onclick="setTab('partidos')">⚽ Partidos</button>
+  <button class="tab-btn" data-tab="detalle" onclick="setTab('detalle')">🔍 Quinielas Completas</button>
+</nav>
+
+<div class="container">
+
+<div class="tab-page active" id="tab-principal">
+  <!-- TOP 5 -->
+  <div class="page-section" id="top5">
+    <div class="section-title">🥇 Top 5 Líderes</div>
+    <div class="top5-grid" id="top5-grid"></div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="page-section" id="resumen">
+    <div class="section-title">📊 Resumen General</div>
+    <div class="summary-grid" id="summary-stats"></div>
+  </div>
+
+  <!-- CLASIFICACION -->
+  <div class="page-section" id="clasificacion">
+    <div class="section-title">🥇 Clasificación Completa</div>
+    <div class="table-wrap">
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th class="pos-cell">#</th>
+            <th>Participante</th>
+            <th style="text-align:right">Puntos</th>
+            <th style="text-align:right">Ganador ✓</th>
+            <th style="text-align:right">Exacto 🎯</th>
+            <th style="text-align:right">Jugados</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="tab-page" id="tab-partidos">
+  <!-- PARTIDOS -->
+  <div class="page-section" id="partidos">
+    <div class="section-title">⚽ Partidos</div>
+    <div class="filter-row">
+      <input class="filter-input" id="match-search" placeholder="Buscar partido…" oninput="renderMatches()">
+      <button class="filter-btn active" id="btn-all" onclick="setFilter('all')">Todos</button>
+      <button class="filter-btn" id="btn-done" onclick="setFilter('done')">Jugados</button>
+      <button class="filter-btn" id="btn-pending" onclick="setFilter('pending')">Pendientes</button>
+    </div>
+    <div class="matches-grid" id="matches-grid"></div>
+  </div>
+</div>
+
+<div class="tab-page" id="tab-detalle">
+  <!-- DETALLE -->
+  <div class="page-section" id="detalle">
+    <div class="section-title">🔍 Quinielas Completas</div>
+    <div class="filter-row">
+      <input class="filter-input" id="detail-search" placeholder="Buscar partido…" oninput="renderDetail()">
+    </div>
+    <div style="margin-bottom:0.65rem;font-size:0.73rem;color:var(--muted);">
+      <span style="background:rgba(63,185,80,0.25);color:var(--green);padding:0.1rem 0.4rem;border-radius:4px;margin-right:0.4rem;">Marcador exacto +2pts</span>
+      <span style="background:rgba(88,166,255,0.15);color:var(--blue);padding:0.1rem 0.4rem;border-radius:4px;margin-right:0.4rem;">Ganador correcto +1pt</span>
+      <span style="color:rgba(139,148,158,0.5);">Sin puntos</span>
+    </div>
+    <div class="table-wrap">
+      <table class="full-table">
+        <thead id="detail-head"></thead>
+        <tbody id="detail-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setTab(name){
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelector('.tab-btn[data-tab="'+name+'"]').classList.add('active');
+}
+</script>
+
+
+<script>
+// ===== FLAGS =====
+const FLAGS = {
+  MEX:'🇲🇽',SUD:'🇿🇦',COR:'🇰🇷',RCH:'🇨🇱',CAN:'🇨🇦',BOS:'🇧🇦',
+  EUA:'🇺🇸',PAR:'🇵🇾',QAT:'🇶🇦',SUI:'🇨🇭',BRA:'🇧🇷',MAR:'🇲🇦',
+  HAI:'🇭🇹',ESC:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',AUS:'🇦🇺',TUR:'🇹🇷',ALE:'🇩🇪',CUR:'🇨🇼',
+  HOL:'🇳🇱',JAP:'🇯🇵',CMA:'🇨🇲',ECU:'🇪🇨',SUE:'🇸🇪',TUN:'🇹🇳',
+  ESP:'🇪🇸',CVE:'🇨🇻',BEL:'🇧🇪',EGI:'🇪🇬',ASA:'🇸🇦',URU:'🇺🇾',
+  IRA:'🇮🇷',NZE:'🇳🇿',FRA:'🇫🇷',SEN:'🇸🇳',IRK:'🇮🇶',NOR:'🇳🇴',
+  ARG:'🇦🇷',ARGE:'🇦🇷',ARE:'🇦🇪',JOR:'🇯🇴',POR:'🇵🇹',CON:'🇨🇩',
+  ING:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',CRO:'🇭🇷',GAN:'🇬🇭',GHA:'🇬🇭',PAN:'🇵🇦',UZB:'🇺🇿',
+  COL:'🇨🇴',CZK:'🇨🇿',CAB:'🇨🇻',NZEL:'🇳🇿',
+};
+function flag(c){return FLAGS[c]||'🏳️';}
+function teamLabel(c){return `${flag(c)} ${c}`;}
+
+// ===== MATCHES =====
+const MATCHES=[
+  {id:0,home:'MEX',away:'SUD'},{id:1,home:'COR',away:'RCH'},{id:2,home:'CAN',away:'BOS'},
+  {id:3,home:'EUA',away:'PAR'},{id:4,home:'QAT',away:'SUI'},{id:5,home:'BRA',away:'MAR'},
+  {id:6,home:'HAI',away:'ESC'},{id:7,home:'AUS',away:'TUR'},{id:8,home:'ALE',away:'CUR'},
+  {id:9,home:'HOL',away:'JAP'},{id:10,home:'CMA',away:'ECU'},{id:11,home:'SUE',away:'TUN'},
+  {id:12,home:'ESP',away:'CVE'},{id:13,home:'BEL',away:'EGI'},{id:14,home:'ASA',away:'URU'},
+  {id:15,home:'IRA',away:'NZE'},{id:16,home:'FRA',away:'SEN'},{id:17,home:'IRK',away:'NOR'},
+  {id:18,home:'ARG',away:'ARGE'},{id:19,home:'ARE',away:'AUS'},{id:20,home:'JOR',away:'POR'},
+  {id:21,home:'CON',away:'ING'},{id:22,home:'CRO',away:'GAN'},{id:23,home:'PAN',away:'UZB'},
+  {id:24,home:'COL',away:'CZK'},
+  {id:25,home:'SUD',away:'SUI'},{id:26,home:'BOS',away:'CAN'},{id:27,home:'QAT',away:'MEX'},
+  {id:28,home:'COR',away:'EUA'},{id:29,home:'AUS',away:'ESC'},{id:30,home:'MAR',away:'BRA'},
+  {id:31,home:'HAI',away:'TUR'},{id:32,home:'PAR',away:'HOL'},{id:33,home:'SUE',away:'ALE'},
+  {id:34,home:'CMA',away:'ECU'},{id:35,home:'CUR',away:'TUN'},{id:36,home:'JAP',away:'ESP'},
+  {id:37,home:'ASA',away:'BEL'},{id:38,home:'IRA',away:'URU'},{id:39,home:'CAB',away:'NZE'},
+  {id:40,home:'EGI',away:'ARG'},{id:41,home:'AUS',away:'FRA'},{id:42,home:'IRK',away:'NOR'},
+  {id:43,home:'SEN',away:'JOR'},{id:44,home:'ARG',away:'POR'},{id:45,home:'UZB',away:'ING'},
+  {id:46,home:'GAN',away:'PAN'},{id:47,home:'CRO',away:'COL'},{id:48,home:'CON',away:'SUI'},
+  {id:49,home:'CAN',away:'BOS'},{id:50,home:'QAT',away:'BRA'},{id:51,home:'ESC',away:'MAR'},
+  {id:52,home:'HAI',away:'CZK'},{id:53,home:'MEX',away:'SUD'},{id:54,home:'COR',away:'CUR'},
+  {id:55,home:'CMA',away:'ECU'},{id:56,home:'ALE',away:'JAP'},{id:57,home:'SUE',away:'TUN'},
+  {id:58,home:'HOL',away:'TUR'},{id:59,home:'EUA',away:'PAR'},
+  {id:60,home:'AUS',away:'AUS'},{id:61,home:'NOR',away:'FRA'},{id:62,home:'SEN',away:'IRK'},
+  {id:63,home:'CAB',away:'ASA'},{id:64,home:'URU',away:'ESP'},{id:65,home:'EGI',away:'IRA'},
+  {id:66,home:'NZEL',away:'BEL'},{id:67,home:'PAN',away:'ING'},{id:68,home:'CRO',away:'GHA'},
+  {id:69,home:'COL',away:'POR'},{id:70,home:'CON',away:'UZB'},{id:71,home:'ARG',away:'AUS'},
+  {id:72,home:'JOR',away:'ARG'},
+];
+
+const RAW={
+  'ROLANDO SUAREZ NAVA (1)':[2,0,0,1,3,0,2,0,2,2,1,0,0,1,1,0,4,0,2,1,0,0,3,1,4,0,1,0,1,1,2,1,1,0,0,1,3,0,2,1,4,0,2,1,2,2,0,3,2,1,2,1,1,0,3,1,1,0,1,2,5,0,2,2,1,1,2,0,2,0,1,2,2,0,2,1,2,0,1,2,2,1,2,0,2,1,1,2,3,1,2,0,1,0,5,0,1,1,2,2,3,1,1,0,2,2,0,2,1,1,0,1,2,2,0,1,1,2,2,1,1,1,3,1,2,1,1,1,2,1,0,2,1,3,2,1,1,2,1,0,2,1,0,2],
+  'ROLANDO SUAREZ NAVA (2)':[3,0,1,1,2,0,2,1,3,0,1,1,0,2,1,1,5,0,2,2,1,2,1,1,5,0,2,1,1,2,2,1,2,0,0,2,3,1,2,0,3,1,0,0,0,1,0,2,1,1,2,1,1,0,2,2,2,0,1,3,4,0,1,1,2,1,3,1,3,0,0,1,2,0,2,2,2,0,0,1,2,1,3,0,0,1,0,2,1,1,2,1,0,0,4,0,1,0,0,1,2,0,2,0,0,2,1,2,0,3,2,2,1,0,1,2,2,2,1,0,0,2,3,0,0,2,2,2,0,0,0,3,1,2,3,1,1,1,0,2,1,1,0,4],
+  'MANUEL SUAREZ':[2,0,2,1,2,2,3,1,0,1,1,2,1,2,1,2,3,0,1,2,1,3,2,0,3,0,1,1,1,2,2,1,3,1,0,3,4,2,2,0,4,0,2,2,2,3,0,2,2,0,2,0,2,1,2,1,2,1,2,2,5,1,1,1,2,1,4,0,2,1,1,2,4,1,3,1,3,0,2,2,3,1,3,1,1,0,1,0,3,1,3,1,1,2,3,1,0,2,3,0,3,0,2,0,1,1,1,2,1,2,1,4,3,1,1,2,1,3,3,1,1,2,1,1,1,2,1,3,1,2,1,2,1,3,2,1,2,4,0,1,2,2,1,4],
+  'MANUEL SUAREZ (1)':[2,1,1,1,1,1,2,1,1,2,2,1,0,2,1,3,5,1,2,1,2,2,2,1,3,1,2,1,1,3,2,2,3,1,1,3,5,1,3,0,3,1,3,1,2,2,1,3,2,1,2,1,3,1,2,2,3,1,1,2,4,0,2,1,3,1,4,1,3,2,1,3,3,1,2,1,2,0,2,2,3,1,3,1,1,0,1,0,3,1,2,1,1,2,3,1,1,2,3,1,3,1,2,1,1,2,1,2,1,2,1,3,3,2,1,3,1,2,2,1,1,3,1,1,1,2,1,3,1,2,1,2,1,3,2,1,2,3,0,1,2,2,1,4],
+  'SAMUEL Y LALO':[2,0,2,2,1,2,2,1,1,4,2,1,1,1,0,1,3,0,2,1,1,1,3,1,3,0,2,0,0,2,2,0,2,1,1,3,4,2,2,0,4,0,2,0,2,1,0,3,2,0,2,1,2,0,2,1,2,1,1,2,4,0,1,2,2,1,3,0,3,0,0,2,2,0,2,1,2,0,1,2,3,1,3,1,2,1,0,2,3,0,2,1,1,2,3,1,2,1,1,1,2,0,2,0,2,2,1,2,1,2,1,2,1,1,1,2,0,2,2,1,1,2,2,1,0,1,1,2,1,2,0,2,1,2,2,2,2,2,1,0,2,1,0,2],
+  'GLADYS PAREDES':[2,0,0,1,1,0,1,0,1,3,0,0,1,2,1,1,2,0,1,1,1,1,1,1,1,0,1,0,1,2,2,0,1,0,0,1,2,0,3,1,1,0,0,1,2,1,0,1,0,0,2,1,1,0,2,1,1,0,0,2,3,0,2,1,0,1,3,0,2,0,1,1,2,1,2,1,2,1,1,1,2,1,2,1,1,1,2,1,3,0,2,1,1,1,3,0,2,2,1,2,2,0,2,0,1,1,1,1,0,1,1,1,2,1,1,2,0,1,2,1,1,2,1,0,0,1,1,2,1,1,0,2,0,1,1,0,0,0,2,1,1,2,0,3],
+  'GLADYS PAREDES (1)':[2,0,3,1,2,0,2,1,0,3,1,1,0,2,2,2,3,0,3,1,1,1,2,2,4,0,2,0,2,0,2,1,2,0,1,1,3,0,1,0,3,0,3,0,0,1,0,2,1,0,3,0,1,0,1,1,2,2,0,2,4,0,1,1,2,1,2,0,3,0,2,1,4,0,2,0,2,0,0,1,2,1,3,0,1,1,0,2,3,1,3,0,1,2,2,1,2,2,0,1,2,1,4,0,2,0,0,1,0,0,0,2,1,0,1,3,0,0,1,1,0,3,0,0,0,0,1,3,1,1,0,2,0,3,2,0,1,1,1,1,0,0,0,1],
+  'ROLANDO SUAREZ GARCIA':[3,1,2,1,2,1,3,0,1,3,3,2,0,3,1,3,3,1,2,2,2,0,2,0,5,0,3,1,1,3,2,0,4,0,1,3,2,1,1,0,4,1,3,2,2,0,1,3,2,1,1,1,3,2,2,1,2,0,1,3,3,0,2,0,2,0,3,1,2,3,1,3,4,0,2,0,2,0,1,3,3,1,4,0,3,1,0,1,3,0,2,0,1,2,2,0,1,3,2,1,3,1,3,0,1,3,0,2,3,1,0,3,2,1,0,2,3,1,0,1,2,3,2,0,2,1,2,3,2,0,0,4,1,4,2,2,1,3,1,0,2,0,0,4],
+  'MARCO TULIO':[2,0,1,1,2,0,2,1,0,2,2,2,0,2,1,2,4,0,1,2,1,1,1,0,3,0,2,1,1,3,2,0,3,1,0,1,3,0,2,0,2,1,1,0,1,0,1,1,1,0,2,0,2,1,1,1,3,1,1,2,4,0,2,1,2,1,3,1,3,0,0,3,3,0,2,1,2,0,0,3,2,0,3,0,1,1,1,1,3,0,2,0,0,1,2,1,1,2,2,1,2,0,2,0,1,2,1,2,3,0,1,2,2,1,0,2,1,2,1,1,1,3,2,0,0,1,0,1,3,1,0,3,1,3,2,1,1,2,0,1,1,2,0,3],
+  'DAVID GARCIA':[2,0,1,1,1,0,2,0,0,2,2,1,0,2,1,1,3,0,2,1,1,1,2,0,3,0,2,1,0,2,1,1,2,1,0,2,2,0,2,1,3,0,2,1,1,1,0,2,1,1,2,0,2,1,2,1,2,1,1,1,3,0,2,1,1,1,2,1,2,0,0,1,3,0,2,0,2,0,1,1,2,1,2,0,1,1,0,2,2,0,2,0,1,2,2,0,2,1,1,1,2,0,2,0,1,2,1,1,0,2,1,2,1,1,0,2,1,2,1,1,1,2,2,0,1,1,1,2,1,1,0,2,0,3,2,0,1,1,1,0,1,1,0,2],
+  'ARMANDO RAMIREZ':[3,0,1,2,2,1,2,1,0,3,2,2,1,2,0,2,5,0,1,2,3,1,1,1,2,2,2,1,0,3,1,1,3,0,0,3,2,1,3,0,2,1,2,0,2,2,1,3,3,0,2,1,3,0,2,1,2,1,1,3,4,0,3,1,2,1,2,1,3,0,2,2,4,0,3,1,1,2,1,2,2,2,3,0,3,0,0,2,2,0,3,1,1,2,2,1,1,1,2,1,2,1,4,0,1,2,1,2,0,4,1,3,2,1,1,2,2,1,1,1,2,3,1,1,3,0,1,2,2,1,0,3,0,3,2,1,2,1,1,2,2,2,0,3],
+  'HECTOR DE ANDA':[3,1,2,1,2,0,2,1,1,2,3,1,1,2,2,1,3,0,2,1,2,2,2,1,3,0,1,1,1,2,1,2,3,1,1,2,3,1,1,1,3,0,2,2,1,1,1,2,1,1,2,1,3,1,2,1,2,0,1,2,3,1,1,2,2,1,2,0,2,1,1,3,4,1,2,1,2,1,2,1,3,1,4,1,2,0,1,0,3,0,2,0,1,2,2,1,1,3,1,2,2,0,2,1,0,2,2,2,1,2,2,3,2,1,1,2,1,2,2,1,1,3,2,2,0,1,2,3,1,1,0,2,1,2,3,1,1,3,2,1,2,1,1,3],
+  'PEPE MONDRAGON':[2,0,1,1,1,0,1,0,0,2,2,1,1,2,1,2,3,0,2,1,1,1,1,0,2,0,2,0,0,2,1,1,2,1,0,2,2,0,2,0,2,0,2,1,2,0,0,2,1,0,1,0,2,0,2,1,2,1,0,1,3,0,1,0,2,0,2,0,3,0,0,2,2,0,1,0,2,0,0,1,2,1,3,0,1,1,0,1,2,0,2,0,0,2,2,0,1,1,1,0,3,1,2,0,0,1,0,2,0,2,1,2,1,1,0,2,1,2,1,1,1,2,2,0,1,1,1,1,1,0,0,3,0,3,1,1,1,1,1,0,1,1,0,3],
+  'JOSE ANTONIO MONDRAGON':[2,0,1,1,2,1,2,1,2,1,1,1,1,0,0,2,3,0,2,1,1,1,1,1,3,0,3,1,2,1,1,1,2,0,1,1,2,1,1,1,2,0,1,1,1,2,1,2,1,1,0,0,2,1,1,1,2,1,1,2,2,1,2,1,2,1,2,1,2,1,1,2,2,1,2,1,1,1,1,1,2,1,3,0,0,1,1,1,3,0,2,1,1,2,2,0,1,2,1,2,2,1,2,1,1,2,1,1,2,1,1,2,2,1,1,2,2,1,2,1,1,3,1,1,2,1,1,2,1,1,1,2,1,1,2,1,1,2,2,1,1,1,0,2],
+  'JORGE FLORES (1)':[2,1,1,2,2,1,2,1,1,2,2,1,1,2,1,2,4,1,2,1,1,2,2,1,4,1,2,1,1,2,2,1,4,1,1,2,2,1,2,1,2,1,2,1,1,2,1,2,2,1,2,1,2,1,2,1,1,2,1,2,4,1,2,1,2,1,2,1,2,1,1,2,4,1,2,1,2,1,1,2,2,1,4,1,2,1,1,2,4,1,2,1,1,2,2,1,2,1,2,1,2,1,3,1,1,2,1,2,1,2,1,2,2,1,1,2,2,1,2,2,1,2,1,2,1,2,1,2,1,2,1,4,1,0,2,1,1,2,1,2,2,1,1,3],
+  'JORGE FLORES (2)':[3,0,2,1,1,1,1,1,0,2,3,2,2,2,1,2,5,0,2,2,1,0,2,0,3,0,4,0,0,1,1,0,3,0,2,3,1,1,2,0,3,0,1,0,0,1,1,2,3,1,1,1,2,0,3,2,1,1,0,2,3,0,2,2,2,2,4,1,3,0,0,2,3,0,2,1,2,0,1,3,3,1,3,0,2,0,1,2,2,0,2,0,1,2,3,0,0,1,1,1,3,1,2,1,0,1,1,2,1,2,0,1,2,2,1,3,1,1,1,2,1,3,1,1,1,2,0,2,1,1,0,5,1,1,3,1,2,3,1,1,3,1,1,4],
+  'JORGE FLORES (3)':[3,1,1,3,1,3,1,3,1,3,3,1,1,3,1,3,3,1,1,3,1,3,3,1,3,1,3,1,1,3,3,1,3,1,1,3,3,1,3,1,3,1,3,1,1,3,1,3,3,1,3,1,3,1,3,1,1,3,1,3,3,1,3,1,3,1,3,1,3,1,1,3,3,1,3,1,3,1,1,3,3,1,3,1,3,1,1,3,3,1,3,1,1,3,3,1,3,1,3,1,3,1,3,1,1,3,1,3,1,3,1,3,3,1,1,3,3,1,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,1,1,3,1,3,3,1,1,3],
+  'GUILLERMO GARCIA':[3,1,2,1,1,1,1,1,0,2,2,1,0,4,1,2,4,0,2,2,1,2,2,1,4,0,2,1,0,3,0,2,3,1,0,1,2,1,2,1,3,0,2,2,2,1,1,2,2,0,2,1,3,0,2,2,2,2,1,2,4,0,1,2,2,1,4,1,2,0,1,3,3,1,3,0,4,0,1,1,2,1,3,0,2,1,1,1,3,1,3,1,0,2,3,0,2,1,1,0,2,1,4,0,1,2,0,2,1,2,1,1,2,1,0,2,2,1,1,0,1,2,1,0,0,2,2,3,2,0,0,2,0,3,2,0,1,2,1,1,1,1,0,3],
+  'MAURICIO ONDARRETA':[3,1,1,1,2,1,1,1,0,2,3,1,0,2,1,3,4,1,2,2,2,2,2,1,3,1,2,1,0,2,1,1,3,1,1,2,3,1,3,0,2,0,3,2,2,1,1,3,2,1,2,1,2,0,2,1,2,2,1,2,4,0,2,2,1,1,3,2,2,2,1,3,5,1,2,0,3,1,1,1,2,1,3,1,2,0,0,2,3,0,2,1,0,3,2,2,2,1,3,1,2,0,3,0,1,1,1,2,2,2,1,3,1,2,0,2,1,1,2,1,1,3,1,2,2,1,2,2,1,1,0,2,1,3,2,1,2,2,3,2,1,2,1,4],
+  'INGRID Y GUSTAVO':[2,0,1,1,0,1,1,2,0,2,3,1,0,3,0,2,3,0,2,0,0,1,2,0,3,0,3,0,1,2,2,0,4,1,0,3,2,0,2,0,3,0,3,2,0,1,1,2,2,1,2,2,1,1,2,1,2,1,3,1,4,0,2,2,3,2,4,0,2,0,0,1,3,0,3,0,2,0,1,1,2,2,3,0,2,0,1,1,4,0,4,0,1,2,2,1,3,2,2,1,3,2,2,1,2,2,2,3,2,3,2,4,2,3,1,3,2,2,2,1,3,3,0,1,1,1,2,2,2,2,0,3,0,3,2,0,2,2,0,1,0,2,0,3],
+  'EMILIANO ONDARRETA':[2,0,1,1,2,1,2,1,1,3,2,2,0,3,1,2,7,0,2,2,2,2,2,1,3,1,2,2,1,2,1,1,2,2,1,2,3,1,2,2,3,1,1,2,2,0,1,2,2,1,2,2,1,0,1,0,1,2,1,2,3,0,2,1,2,1,3,3,3,0,2,2,4,2,2,1,1,0,0,2,2,0,3,0,2,2,0,1,2,0,2,2,1,2,1,0,1,2,1,0,1,0,4,0,1,2,1,2,0,3,1,2,2,2,1,2,2,1,2,1,2,3,2,1,1,1,3,3,2,0,1,2,1,2,1,2,1,1,1,1,0,0,1,2],
+};
+
+let results = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
+let matchFilter = 'all';
+
+// ===== SCORING =====
+function calcScore(preds, matchId) {
+  const r = results[matchId];
+  if (!r) return { pts:0, exact:false, winner:false, pending:true };
+  const idx = matchId * 2;
+  if (idx+1 >= preds.length) return { pts:0, exact:false, winner:false, pending:false };
+  const ph = preds[idx], pa = preds[idx+1];
+  const rW = r.home>r.away?'H':r.home<r.away?'A':'D';
+  const pW = ph>pa?'H':ph<pa?'A':'D';
+  const winOk = rW===pW;
+  const exOk = winOk && ph===r.home && pa===r.away;
+  return { pts:(winOk?1:0)+(exOk?1:0), exact:exOk, winner:winOk&&!exOk, pending:false };
+}
+
+function getPred(preds, matchId) {
+  const idx = matchId*2;
+  if (idx+1>=preds.length) return null;
+  return { home:preds[idx], away:preds[idx+1] };
+}
+
+function getTotals(name) {
+  const p = RAW[name];
+  let pts=0,exact=0,winner=0,played=0;
+  MATCHES.forEach(m => {
+    const s = calcScore(p, m.id);
+    if (!s.pending) { pts+=s.pts; if(s.exact)exact++; if(s.winner)winner++; played++; }
+  });
+  return {pts,exact,winner,played};
+}
+
+// ===== RENDER =====
+function renderAll() {
+  renderTop5(); renderSummary(); renderStandings(); renderMatches(); renderDetail();
+}
+
+function renderTop5() {
+  const players = Object.keys(RAW).map(n=>({name:n,...getTotals(n)}));
+  players.sort((a,b)=>b.pts-a.pts||b.exact-a.exact);
+  document.getElementById('top5-grid').innerHTML = players.slice(0,5).map((p,i)=>`
+    <div class="top5-card rank-${i+1}">
+      <div class="rank-badge">${i+1}</div>
+      <div class="player-name">${p.name}</div>
+      <div class="player-pts">${p.pts}</div>
+      <div class="player-pts-label">puntos</div>
+      <div style="margin-top:0.5rem;font-size:0.68rem;color:var(--muted);">🎯 ${p.exact} exactos · ✓ ${p.winner} ganador</div>
+    </div>`).join('');
+}
+
+function renderSummary() {
+  const played = MATCHES.filter(m=>results[m.id]).length;
+  const allPts = Object.keys(RAW).map(n=>getTotals(n).pts);
+  const max = Math.max(...allPts, 0);
+  const avg = allPts.length ? (allPts.reduce((a,b)=>a+b,0)/allPts.length).toFixed(1) : 0;
+  document.getElementById('summary-stats').innerHTML = [
+    {icon:'⚽',val:played,label:'Partidos Jugados'},
+    {icon:'🗓',val:MATCHES.length-played,label:'Por Jugar'},
+    {icon:'📋',val:MATCHES.length,label:'Total Partidos'},
+    {icon:'🏆',val:max,label:'Puntos Máximos'},
+    {icon:'📊',val:avg,label:'Promedio Puntos'},
+    {icon:'👥',val:Object.keys(RAW).length,label:'Participantes'},
+  ].map(s=>`
+    <div class="stat-card">
+      <div class="stat-icon">${s.icon}</div>
+      <div class="stat-val">${s.val}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>`).join('');
+}
+
+function renderStandings() {
+  const players = Object.keys(RAW).map(n=>({name:n,...getTotals(n)}));
+  players.sort((a,b)=>b.pts-a.pts||b.exact-a.exact||b.winner-a.winner);
+  const medals=['medal-1','medal-2','medal-3'];
+  document.getElementById('standings-body').innerHTML = players.map((p,i)=>`
+    <tr>
+      <td class="pos-cell ${medals[i]||''}">${i+1}</td>
+      <td style="font-weight:${i<3?'600':'400'}">${p.name}</td>
+      <td class="pts-cell">${p.pts}</td>
+      <td class="winner-cell">${p.winner}</td>
+      <td class="exact-cell">${p.exact}</td>
+      <td style="text-align:right;color:var(--muted);font-size:0.8rem;">${p.played}</td>
+    </tr>`).join('');
+}
+
+function renderMatches() {
+  const search = document.getElementById('match-search').value.toLowerCase();
+  const filtered = MATCHES.filter(m => {
+    const txt = `${m.home} ${m.away}`.toLowerCase();
+    const done = !!results[m.id];
+    if (!txt.includes(search)) return false;
+    if (matchFilter==='done' && !done) return false;
+    if (matchFilter==='pending' && done) return false;
+    return true;
+  });
+  document.getElementById('matches-grid').innerHTML = filtered.map(m => {
+    const r = results[m.id];
+    return `
+      <div class="match-card ${r?'has-result':''}" id="card-${m.id}">
+        <div class="match-header">
+          <span class="match-num">Partido ${m.id+1}</span>
+          <span class="match-status ${r?'done':'pending'}">${r?`✓ ${r.home}–${r.away}`:'Pendiente'}</span>
+        </div>
+        <div class="match-teams">
+          <div class="team-name">${teamLabel(m.home)}</div>
+          <div class="vs-divider">VS</div>
+          <div class="team-name">${teamLabel(m.away)}</div>
+        </div>
+        <div class="result-input-row">
+          <input class="score-input" id="r${m.id}h" type="number" min="0" max="20" placeholder="—" value="${r?r.home:''}">
+          <div class="score-sep">–</div>
+          <input class="score-input" id="r${m.id}a" type="number" min="0" max="20" placeholder="—" value="${r?r.away:''}">
+        </div>
+        <button class="save-btn ${r?'saved':''}" onclick="saveResult(${m.id})">
+          ${r?'Actualizar resultado':'Guardar resultado'}
+        </button>
+      </div>`;
+  }).join('') || '<div style="color:var(--muted);padding:2rem;text-align:center;grid-column:1/-1;">No se encontraron partidos</div>';
+}
+
+function saveResult(matchId) {
+  const h = parseInt(document.getElementById(`r${matchId}h`).value);
+  const a = parseInt(document.getElementById(`r${matchId}a`).value);
+  if (isNaN(h)||isNaN(a)||h<0||a<0) { alert('Ingresa marcadores válidos (números ≥ 0)'); return; }
+  results[matchId] = {home:h, away:a};
+  localStorage.setItem('wc2026_results', JSON.stringify(results));
+  renderAll();
+}
+
+function renderDetail() {
+  const search = document.getElementById('detail-search').value.toLowerCase();
+  const fm = MATCHES.filter(m => `${m.home} ${m.away}`.toLowerCase().includes(search));
+  document.getElementById('detail-head').innerHTML = `<tr>
+    <th class="name-col">Participante</th>
+    ${fm.map(m=>`<th title="${m.home} vs ${m.away}">${flag(m.home)}${m.home}<br>${flag(m.away)}${m.away}</th>`).join('')}
+    <th>PTS</th></tr>`;
+  const players = Object.keys(RAW).sort((a,b)=>getTotals(b).pts-getTotals(a).pts);
+  document.getElementById('detail-body').innerHTML = players.map(name => {
+    const preds = RAW[name];
+    const cells = fm.map(m => {
+      const pred = getPred(preds, m.id);
+      const s = calcScore(preds, m.id);
+      const str = pred ? `${pred.home}-${pred.away}` : '?';
+      const r = results[m.id];
+      let cls = !r ? 'cell-pending' : s.exact ? 'cell-exact' : s.winner ? 'cell-winner' : 'cell-none';
+      const tip = `Pronóstico: ${str}${r?` (Real: ${r.home}-${r.away})`:''}`;
+      return `<td class="${cls}" title="${tip}">${str}</td>`;
+    }).join('');
+    const tot = getTotals(name);
+    return `<tr><td class="name-col">${name}</td>${cells}<td style="font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);text-align:center;">${tot.pts}</td></tr>`;
+  }).join('');
+}
+
+function setFilter(f) {
+  matchFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`btn-${f}`).classList.add('active');
+  renderMatches();
+}
+
+renderAll();
+</script>
+</body>
+</html>
