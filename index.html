@@ -552,6 +552,27 @@
   }
   @media(max-width:900px){ .top5-grid{grid-template-columns:repeat(3,1fr);} }
   @media(max-width:560px){ .top5-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:600px){
+    .top5-grid { grid-template-columns: 1fr !important; gap: .5rem; }
+    .top5-card {
+      padding: .85rem 1rem .85rem 1.2rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      text-align: left;
+      gap: .9rem;
+    }
+    .top5-card::before {
+      top: 0; bottom: 0; right: auto; left: 0;
+      width: 3px; height: auto;
+      border-radius: 14px 0 0 14px;
+    }
+    .rank-badge { position: static; transform: none; flex-shrink: 0; }
+    .player-name { margin-top: 0; font-size: .85rem; }
+    .player-pts { font-size: 2rem; margin-top: 0; line-height: 1; }
+    .player-pts-label { display: none; }
+    .top5-name-wrap { flex: 1; min-width: 0; }
+  }
 
   .top5-card {
     background: var(--card-bg);
@@ -855,6 +876,14 @@
     .hstat-sep{display:none;}
     .hstat{padding:0 .7rem;}
 
+    /* Tabs: más compactas, scroll horizontal */
+    .sticky-nav { justify-content: flex-start; }
+    .sticky-nav button.tab-btn {
+      padding: .7rem .9rem;
+      font-size: .68rem;
+      letter-spacing: .04em;
+    }
+
     /* Summary grid: 2 columnas en móvil */
     .summary-grid { grid-template-columns: repeat(2, 1fr); gap: .5rem; }
     .stat-card { padding: 1.4rem .6rem; }
@@ -862,9 +891,12 @@
     .stat-val  { font-size: 2rem; }
     .stat-label{ font-size: .58rem; }
 
+    /* Sección títulos más chicos */
+    .section-title { font-size: 1.2rem; }
+
     /* Premios: 1 columna, más compactas */
     .prizes-grid { grid-template-columns: 1fr; gap: .75rem; }
-    .prize-card-top { padding: 1.2rem 1.2rem 0; gap: .75rem; }
+    .prize-card-top { padding: 1.2rem 1.2rem 0; }
     .prize-medal { width: 3rem; height: 3rem; font-size: 1.5rem; }
     .prize-name  { font-size: 1.35rem; }
     .prize-place { font-size: .55rem; }
@@ -880,6 +912,7 @@
     .stat-val { font-size: 1.7rem; }
     .prize-amount { font-size: 2rem; }
     .prize-name  { font-size: 1.15rem; }
+    .sticky-nav button.tab-btn { padding: .65rem .7rem; font-size: .62rem; }
   }
 </style>
 </head>
@@ -1294,10 +1327,12 @@ function renderTop5() {
   document.getElementById('top5-grid').innerHTML = players.slice(0,5).map((p,i)=>`
     <div class="top5-card rank-${i+1}">
       <div class="rank-badge">${i+1}</div>
-      <div class="player-name">${p.name}</div>
-      <div class="player-pts">${p.pts}</div>
-      <div class="player-pts-label">puntos</div>
-      <div style="margin-top:0.5rem;font-size:0.68rem;color:var(--muted);"><svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.7" fill="currentColor"/></svg> ${p.exact} exactos · <svg class="icn" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> ${p.winner} ganador</div>
+      <div class="top5-name-wrap">
+        <div class="player-name">${p.name}</div>
+        <div class="player-pts">${p.pts}</div>
+        <div class="player-pts-label">puntos</div>
+        <div style="margin-top:0.5rem;font-size:0.68rem;color:var(--muted);"><svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.7" fill="currentColor"/></svg> ${p.exact} exactos · <svg class="icn" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> ${p.winner} ganador</div>
+      </div>
     </div>`).join('');
 }
 
