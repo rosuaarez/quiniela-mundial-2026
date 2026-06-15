@@ -547,11 +547,23 @@
   ════════════════════════════ */
   .top5-grid {
     display: grid;
-    grid-template-columns: repeat(5,1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.75rem;
+    align-items: stretch;
   }
-  @media(max-width:900px){ .top5-grid{grid-template-columns:repeat(3,1fr);} }
-  @media(max-width:560px){ .top5-grid{grid-template-columns:repeat(2,1fr);} }
+  .top5-card.rank-1 { grid-column: auto; }
+  .top5-card.rank-2 { grid-column: auto; }
+  @media(max-width:900px){ .top5-grid{grid-template-columns:repeat(5,1fr);} }
+  @media(max-width:700px){
+    .top5-grid { grid-template-columns: repeat(3, 1fr); }
+    .top5-card.rank-1 { grid-column: auto; }
+    .top5-card.rank-2 { grid-column: auto; }
+  }
+  @media(max-width:560px){ .top5-grid{grid-template-columns:repeat(3,1fr);} }
+  @media(max-width:420px){
+    .top5-grid { grid-template-columns: 1fr 1fr; }
+    .top5-card { grid-column: auto !important; }
+  }
   @media(max-width:600px){
     .top5-grid { grid-template-columns: 1fr !important; gap: .5rem; }
     .top5-card {
@@ -578,7 +590,7 @@
     background: var(--card-bg);
     border: 1px solid var(--card-bdr);
     border-radius: 14px;
-    padding: 1.3rem 1rem;
+    padding: 1.5rem 1rem;
     text-align: center;
     position: relative;
     transition: transform .2s, box-shadow .2s;
@@ -592,24 +604,79 @@
   .top5-card.rank-1::before { opacity:1; }
   .top5-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }
   .top5-card.rank-1 {
-    border-color: var(--yellow);
-    background: linear-gradient(145deg, rgba(255,201,51,.08), var(--card-bg));
-    box-shadow: 0 0 0 1px rgba(255,201,51,.15), 0 8px 24px rgba(255,201,51,.08);
+    padding: 1.5rem 1rem;
+    border-color: #D4A017;
+    border-width: 2px;
+    background: linear-gradient(145deg, rgba(255,215,0,.26) 0%, rgba(255,170,0,.14) 45%, rgba(180,110,0,.07) 70%, var(--card-bg) 100%);
+    box-shadow: 0 0 0 1px rgba(255,215,0,.40), 0 12px 40px rgba(255,180,0,.22), inset 0 1px 0 rgba(255,255,255,.07);
   }
-  html.light .top5-card.rank-1 { background: linear-gradient(145deg, #fffbea, #fff); }
-  .top5-card.rank-2 { border-color: rgba(199,210,227,.4); }
-  .top5-card.rank-3 { border-color: rgba(255,107,0,.4); }
+  .top5-card.rank-1::before {
+    height: 4px;
+    background: linear-gradient(90deg, #B8860B, #FFD700, #FFA500, #FFD700, #B8860B);
+  }
+  .top5-card.rank-1 .player-name { font-size: .82rem; color: #FFE566; font-weight: 800; text-shadow: 0 1px 8px rgba(255,200,0,.35); }
+  .top5-card.rank-1 .player-pts {
+    font-size: 2.8rem;
+    background: linear-gradient(180deg, #FFE566 0%, #FFB300 55%, #CC8800 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(255,180,0,.45));
+  }
+  .top5-card.rank-1 .player-pts-label { font-size: .6rem; color: rgba(255,210,80,.55); }
+  html.light .top5-card.rank-1 {
+    background: linear-gradient(145deg, rgba(253,186,0,.20) 0%, rgba(253,120,0,.07) 60%, #fff 100%);
+  }
+  html.light .top5-card.rank-1 .player-name { color: #92400E; text-shadow: none; }
+  html.light .top5-card.rank-1 .player-pts { background: linear-gradient(180deg,#D97706,#B45309); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:none; }
+
+  .top5-card.rank-2 {
+    padding: 1.5rem 1rem;
+    border-color: #9BA8B8;
+    border-width: 1.5px;
+    background: linear-gradient(145deg, rgba(192,200,215,.20) 0%, rgba(155,168,184,.10) 50%, var(--card-bg) 100%);
+    box-shadow: 0 0 0 1px rgba(185,195,210,.28), 0 8px 28px rgba(155,168,184,.14);
+  }
+  .top5-card.rank-2::before {
+    height: 3px;
+    background: linear-gradient(90deg, #6B7A8D, #C0C8D7, #E8EDF5, #C0C8D7, #6B7A8D);
+  }
+  .top5-card.rank-2 .player-name { font-size: .82rem; color: #C8D4E4; font-weight: 700; }
+  .top5-card.rank-2 .player-pts {
+    font-size: 2.8rem;
+    background: linear-gradient(180deg, #E8EDF5 0%, #B0BCC8 55%, #7A8899 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 1px 4px rgba(155,168,184,.35));
+  }
+  .top5-card.rank-2 .player-pts-label { font-size: .6rem; color: rgba(175,190,205,.5); }
+  html.light .top5-card.rank-2 {
+    background: linear-gradient(145deg, rgba(100,116,139,.10) 0%, rgba(100,116,139,.04) 60%, #fff 100%);
+  }
+  html.light .top5-card.rank-2 .player-name { color: #475569; }
+  html.light .top5-card.rank-2 .player-pts { background: linear-gradient(180deg,#64748B,#475569); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:none; }
+
+  .top5-card.rank-3 { border-color: rgba(255,107,0,.3); opacity: .85; }
+  .top5-card.rank-4,
+  .top5-card.rank-5 { opacity: .75; }
+  .top5-card.rank-3:hover, .top5-card.rank-4:hover, .top5-card.rank-5:hover { opacity: 1; }
+  .top5-card.rank-3 .player-pts,
+  .top5-card.rank-4 .player-pts,
+  .top5-card.rank-5 .player-pts { font-size: 2.8rem; }
+  .top5-card.rank-3 .player-name,
+  .top5-card.rank-4 .player-name,
+  .top5-card.rank-5 .player-name { font-size: .82rem; color: var(--txt2); }
+  .top5-card.rank-3 .player-pts-label,
+  .top5-card.rank-4 .player-pts-label,
+  .top5-card.rank-5 .player-pts-label { display: block; }
 
   .rank-badge {
-    position:absolute; top:-11px; left:50%; transform:translateX(-50%);
-    width:26px; height:26px; border-radius:50%;
+    position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    width:28px; height:28px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     font-size:0.72rem; font-weight:700; color:#000;
   }
-  .rank-1 .rank-badge { background: var(--yellow); }
-  .rank-2 .rank-badge { background: var(--silver); color: var(--bg); }
-  .rank-3 .rank-badge { background: var(--bronze); color: #fff; }
-  .rank-4 .rank-badge, .rank-5 .rank-badge { background: var(--surf2); color: var(--txt3); }
+  .rank-1 .rank-badge { background: none; font-size:1.8rem; width:38px; height:38px; top:-19px; filter: drop-shadow(0 3px 10px rgba(255,200,0,.8)); }
+  .rank-2 .rank-badge { background: none; font-size:1.4rem; width:32px; height:32px; top:-16px; filter: drop-shadow(0 2px 6px rgba(180,195,210,.6)); }
+  .rank-3 .rank-badge { background: var(--bronze); color: #fff; font-size:.62rem; width:22px; height:22px; top:-11px; }
+  .rank-4 .rank-badge, .rank-5 .rank-badge { background: var(--surf2); color: var(--txt3); font-size:.58rem; width:20px; height:20px; top:-10px; }
 
   .player-name { font-weight:700; font-size:0.82rem; margin-top:0.3rem; word-break:break-word; line-height:1.3; color:var(--txt); }
   .player-pts {
@@ -764,9 +831,56 @@
     font-family:'Bebas Neue',sans-serif; font-size:1.3rem;
     color:var(--pts-color); text-align:right;
   }
-  .exact-cell { font-size:.75rem; color:var(--txt3); text-align:right; }
-  .winner-cell { font-size:.75rem; color:var(--cyan); text-align:right; }
-  html.light .winner-cell { color:var(--blue); }
+  .exact-cell { text-align:right; }
+  .exact-val {
+    font-family:'Bebas Neue',sans-serif; font-size:1.4rem;
+    color: var(--lime);
+    display: inline-block;
+    background: rgba(184,255,0,.12);
+    border: 1px solid rgba(184,255,0,.30);
+    border-radius: 8px;
+    padding: 0 0.5rem;
+    min-width: 2rem;
+    text-align: center;
+    line-height: 1.6;
+  }
+  html.light .exact-val { color:var(--blue); background:rgba(37,99,235,.08); border-color:rgba(37,99,235,.25); }
+  .winner-cell { text-align:right; }
+  .winner-val {
+    font-family:'Bebas Neue',sans-serif; font-size:1.4rem;
+    color: var(--cyan);
+    display: inline-block;
+    background: rgba(0,200,255,.10);
+    border: 1px solid rgba(0,200,255,.25);
+    border-radius: 8px;
+    padding: 0 0.5rem;
+    min-width: 2rem;
+    text-align: center;
+    line-height: 1.6;
+  }
+  html.light .winner-val { color:var(--blue); background:rgba(37,99,235,.06); border-color:rgba(37,99,235,.18); }
+  .streak-cell { font-size:.78rem; font-weight:700; text-align:right; white-space:nowrap; }
+  .streak-hot { color:#FF6B00; }
+  .streak-ok  { color:var(--txt2); }
+  .streak-zero{ color:var(--txt3); opacity:.5; }
+
+  /* ─── ROW HIGHLIGHTS: 1st & 2nd place ─── */
+  .standings-table tbody tr.rank-gold td {
+    background: linear-gradient(90deg, rgba(255,201,51,.10) 0%, transparent 100%);
+  }
+  .standings-table tbody tr.rank-silver td {
+    background: linear-gradient(90deg, rgba(199,210,227,.07) 0%, transparent 100%);
+  }
+  html.light .standings-table tbody tr.rank-gold td {
+    background: linear-gradient(90deg, rgba(253,186,0,.12) 0%, transparent 100%);
+  }
+  html.light .standings-table tbody tr.rank-silver td {
+    background: linear-gradient(90deg, rgba(100,116,139,.08) 0%, transparent 100%);
+  }
+
+  /* crown badge in pos cell */
+  .crown-gold   { font-size:1.1rem; display:inline-block; filter: drop-shadow(0 1px 4px rgba(255,201,51,.6)); }
+  .crown-silver { font-size:1.1rem; display:inline-block; filter: drop-shadow(0 1px 4px rgba(199,210,227,.5)); }
 
   /* ════════════════════════════
      MATCHES
@@ -974,10 +1088,10 @@
       <div class="prize-card prize-gold">
         <div class="prize-card-top">
           <div class="prize-left">
-            <div class="prize-medal">🥇</div>
+            <div class="prize-medal" style="font-size:2.2rem;">👑</div>
             <div>
               <div class="prize-place">1er lugar</div>
-              <div class="prize-name">Líder</div>
+              <div class="prize-name" id="prize-name-1">Líder</div>
             </div>
           </div>
           <div class="prize-pct-badge">80%</div>
@@ -993,10 +1107,10 @@
       <div class="prize-card prize-silver">
         <div class="prize-card-top">
           <div class="prize-left">
-            <div class="prize-medal">🥈</div>
+            <div class="prize-medal" style="font-size:2.2rem; filter:grayscale(.15) brightness(1.1);">🥈</div>
             <div>
               <div class="prize-place">2do lugar</div>
-              <div class="prize-name">Sublíder</div>
+              <div class="prize-name" id="prize-name-2">Sublíder</div>
             </div>
           </div>
           <div class="prize-pct-badge">20%</div>
@@ -1022,9 +1136,10 @@
             <th class="pos-cell">#</th>
             <th>Participante</th>
             <th style="text-align:right">Puntos</th>
-            <th style="text-align:right">Ganador <svg class="icn" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></th>
-            <th style="text-align:right">Exacto <svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.7" fill="currentColor"/></svg></th>
+            <th style="text-align:right">Exacto <span style="font-size:.6rem;opacity:.55;font-weight:400">+2pts</span></th>
+            <th style="text-align:right">Ganador <span style="font-size:.6rem;opacity:.55;font-weight:400">+1pt</span></th>
             <th style="text-align:right">Jugados</th>
+
           </tr>
         </thead>
         <tbody id="standings-body"></tbody>
@@ -1308,6 +1423,19 @@ function getTotals(name) {
   return {pts,exact,winner,played};
 }
 
+function getStreak(name) {
+  const p = RAW[name];
+  // Walk matches in reverse order; count consecutive winner (or exact) hits
+  const played = MATCHES.filter(m => results[m.id]);
+  let streak = 0;
+  for (let i = played.length - 1; i >= 0; i--) {
+    const s = calcScore(p, played[i].id);
+    if (s.winner || s.exact) streak++;
+    else break;
+  }
+  return streak;
+}
+
 // ===== RENDER =====
 function renderAll() {
   renderTop5(); renderSummary(); renderStandings(); renderMatches(); renderDetail();
@@ -1316,14 +1444,18 @@ function renderAll() {
 function renderTop5() {
   const players = Object.keys(RAW).map(n=>({name:n,...getTotals(n)}));
   players.sort((a,b)=>b.pts-a.pts||b.exact-a.exact);
+  const rankIcons = ['👑','🥈','🥉','4','5'];
   document.getElementById('top5-grid').innerHTML = players.slice(0,5).map((p,i)=>`
     <div class="top5-card rank-${i+1}">
-      <div class="rank-badge">${i+1}</div>
+      <div class="rank-badge">${i<2 ? rankIcons[i] : i+1}</div>
       <div class="top5-name-wrap">
         <div class="player-name">${p.name}</div>
         <div class="player-pts">${p.pts}</div>
         <div class="player-pts-label">puntos</div>
-        <div style="margin-top:0.5rem;font-size:0.68rem;color:var(--muted);"><svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.7" fill="currentColor"/></svg> ${p.exact} exactos · <svg class="icn" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> ${p.winner} ganador</div>
+        <div style="margin-top:0.6rem;display:flex;justify-content:center;gap:0.4rem;flex-wrap:wrap;">
+          <span style="display:inline-flex;align-items:center;gap:0.25rem;background:rgba(184,255,0,.13);border:1px solid rgba(184,255,0,.30);border-radius:6px;padding:0.18rem 0.5rem;font-size:0.7rem;font-weight:700;color:var(--lime);"><svg class="icn" style="width:.75em;height:.75em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.7" fill="currentColor"/></svg> ${p.exact} exactos</span>
+          <span style="display:inline-flex;align-items:center;gap:0.25rem;background:rgba(0,200,255,.10);border:1px solid rgba(0,200,255,.25);border-radius:6px;padding:0.18rem 0.5rem;font-size:0.7rem;font-weight:700;color:var(--cyan);"><svg class="icn" style="width:.75em;height:.75em" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> ${p.winner} ganador</span>
+        </div>
       </div>
     </div>`).join('');
 }
@@ -1349,18 +1481,32 @@ function renderSummary() {
 }
 
 function renderStandings() {
-  const players = Object.keys(RAW).map(n=>({name:n,...getTotals(n)}));
+  const players = Object.keys(RAW).map(n=>({name:n,...getTotals(n),streak:getStreak(n)}));
   players.sort((a,b)=>b.pts-a.pts||b.exact-a.exact||b.winner-a.winner);
   const medals=['medal-1','medal-2','medal-3'];
-  document.getElementById('standings-body').innerHTML = players.map((p,i)=>`
-    <tr>
-      <td class="pos-cell ${medals[i]||''}">${i+1}</td>
+
+  // Update prize card names
+  if (players[0]) document.getElementById('prize-name-1').textContent = players[0].name;
+  if (players[1]) document.getElementById('prize-name-2').textContent = players[1].name;
+
+  document.getElementById('standings-body').innerHTML = players.map((p,i)=>{
+    const streakCls = p.streak>=3 ? 'streak-hot' : p.streak>0 ? 'streak-ok' : 'streak-zero';
+    const streakLabel = p.streak>=3 ? `🔥 ${p.streak}` : p.streak>0 ? p.streak : '—';
+    const rowCls = i===0 ? 'rank-gold' : i===1 ? 'rank-silver' : '';
+    let posBadge;
+    if (i===0) posBadge = `<span class="crown-gold">👑</span>`;
+    else if (i===1) posBadge = `<span class="crown-silver">🥈</span>`;
+    else posBadge = i+1;
+    return `
+    <tr class="${rowCls}">
+      <td class="pos-cell ${medals[i]||''}">${posBadge}</td>
       <td style="font-weight:${i<3?'600':'400'}">${p.name}</td>
       <td class="pts-cell">${p.pts}</td>
-      <td class="winner-cell">${p.winner}</td>
-      <td class="exact-cell">${p.exact}</td>
+      <td class="exact-cell"><span class="exact-val">${p.exact}</span></td>
+      <td class="winner-cell"><span class="winner-val">${p.winner}</span></td>
       <td style="text-align:right;color:var(--muted);font-size:0.8rem;">${p.played}</td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function renderMatches() {
